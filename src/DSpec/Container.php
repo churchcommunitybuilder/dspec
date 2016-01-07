@@ -2,7 +2,7 @@
 
 namespace DSpec;
 
-use Pimple;
+use \Pimple\Container as Pimple;
 
 /**
  * This file is part of dspec

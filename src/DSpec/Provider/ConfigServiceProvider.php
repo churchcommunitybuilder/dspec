@@ -45,11 +45,11 @@ class ConfigServiceProvider implements ServiceProviderInterface
         /**
          * Default parser
          */
-        $container['config.parser'] = $container->share(function() {
+        $container['config.parser'] = function() {
             return new Yaml\Parser;
-        });
+        };
 
-        $container['config'] = function () use ($container) {
+        $container['config'] = $container->factory(function () use ($container) {
 
             $config = $container['config.skeleton'];
 
@@ -70,9 +70,9 @@ class ConfigServiceProvider implements ServiceProviderInterface
             }
 
             return json_decode(json_encode($config));
-        };
+        });
 
-        $container['profile'] = function () use ($container) {
+        $container['profile'] = $container->factory(function () use ($container) {
 
             $config = $container['config'];
             $profile = $config->default;
@@ -107,7 +107,7 @@ class ConfigServiceProvider implements ServiceProviderInterface
             }
 
             return $profile;
-        };
+        });
 
     }
 
@@ -116,13 +116,13 @@ class ConfigServiceProvider implements ServiceProviderInterface
         /**
          * Lock these down now others have had chance to extend
          */
-        $container['config'] = $container->share($container->extend('config', function($config) {
+        $container['config'] = $container->extend('config', function($config) {
             return $config;
-        }));
+        });
 
-        $container['profile'] = $container->share($container->extend('profile', function($profile) {
+        $container['profile'] = $container->extend('profile', function($profile) {
             return $profile;
-        }));
+        });
     }
 
     /**
