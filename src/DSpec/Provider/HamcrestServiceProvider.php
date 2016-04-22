@@ -39,17 +39,14 @@ class HamcrestServiceProvider implements ServiceProviderInterface
             }
         }
 
-        if (file_exists(__DIR__.'/../../../../hamcrest-php/hamcrest/Hamcrest.php')) {
+        if (file_exists(__DIR__.'/../../../../../hamcrest/hamcrest-php/hamcrest/Hamcrest.php')) {
             // composer install
-            require_once __DIR__.'/../../../../hamcrest-php/hamcrest/Hamcrest.php';
-        } else if (file_exists(__DIR__.'/../../../vendor/davedevelopment/hamcrest-php/hamcrest/Hamcrest.php')) {
-            // dspec dev
-            require_once __DIR__.'/../../../vendor/davedevelopment/hamcrest-php/hamcrest/Hamcrest.php';
-        } else if (fopen('hamcrest/Hamcrest.php', 'r', true)) {
-            // include path
-            require_once 'hamcrest/Hamcrest.php';
+            require_once __DIR__.'/../../../../../hamcrest/hamcrest-php/hamcrest/Hamcrest.php';
+        } elseif (file_exists(__DIR__.'/../../../vendor/hamcrest/hamcrest-php/hamcrest/Hamcrest.php')) {
+            // composer install
+            require_once __DIR__.'/../../../vendor/hamcrest/hamcrest-php/hamcrest/Hamcrest.php';
         } else {
-            throw new \RunTimeException(
+            throw new \RuntimeException(
                 "Could not find hamcrest, please install with composer or put on include path"
             );
         }
