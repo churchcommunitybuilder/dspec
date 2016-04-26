@@ -40,7 +40,13 @@ class SpecContext extends AbstractContext
     public function describe($description, \Closure $closure)
     {
         $context = clone $this;
-        $group = new ExampleGroup($description, $context, $this->__stack->top());
+
+        $parent = $this->__stack->top();
+        if ($parent) {
+            $context->setParentContext($parent->getContext());
+        }
+
+        $group = new ExampleGroup($description, $context, $parent);
         $this->__stack->top()->add($group);
         $this->__stack->push($group);
         $context->run($closure);

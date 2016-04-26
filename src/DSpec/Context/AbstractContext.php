@@ -20,6 +20,8 @@ class AbstractContext
     protected $__data = array();
     protected $__factories = array();
 
+    protected $__parentContext = null;
+
     public function run(\Closure $closure)
     {
         if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
@@ -69,6 +71,11 @@ class AbstractContext
         $this->__factories[$name] = $closure;      
     }
 
+    public function setParentContext(AbstractContext $parentContext)
+    {
+        $this->__parentContext = $parentContext;
+    }
+
     public function __set($name, $value)
     {
         $this->__data[$name] = $value;
@@ -86,6 +93,10 @@ class AbstractContext
             return $value;
         }
 
+        if ($this->__parentContext) {
+            return $this->__parentContext->{$name};
+        }
+
         $trace = debug_backtrace();
         trigger_error(
             'Undefined property via __get(): ' . $name .
@@ -97,7 +108,15 @@ class AbstractContext
 
     public function __isset($name)
     {
-        return isset($this->__data[$name]) || isset($this->__factories[$name]);
+        if (isset($this->__data[$name]) || isset($this->__factories[$name])) {
+            return true;
+        }
+
+        if ($this->__parentContext) {
+            return isset($this->__parentContext->{$name});
+        }
+
+        return false;
     }
 
     public function __unset($name)

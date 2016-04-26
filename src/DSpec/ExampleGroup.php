@@ -38,27 +38,29 @@ class ExampleGroup extends Node
     /**
      * {@inheritDoc}
      */
-    public function run(Reporter $reporter, $context = null)
+    public function run(Reporter $reporter, AbstractContext $parentContext = null)
     {
         $this->startTimer();
         $this->setErrorHandler();
 
-        if ($context === null) {
-            $context = clone $this->context;
+        $thisContextClone = clone $this->context;
+        if ($parentContext !== null) {
+            $thisContextClone->setParentContext($parentContext);
         }
-        $this->runHooks('beforeContext', $context, false, false);
+
+        $this->runHooks('beforeContext', $thisContextClone, false, false);
 
         foreach ($this->examples as $example) {
 
             if ($example instanceof ExampleGroup) {
-                $example->run($reporter, $context);
+                $example->run($reporter, $thisContextClone);
                 continue;
             }
 
             $example->startTimer();
 
             try {
-                $context = clone $context;
+                $context = clone $thisContextClone;
                 $this->runHooks('beforeEach', $context);
                 $example->run($context);
                 $this->runHooks('afterEach', $context, true);
@@ -79,7 +81,7 @@ class ExampleGroup extends Node
             $example->endTimer();
         }
 
-        $this->runHooks('afterContext', $context, false, false);
+        $this->runHooks('afterContext', $thisContextClone, true, false);
 
         $this->restoreErrorHandler();
         $this->endTimer();
