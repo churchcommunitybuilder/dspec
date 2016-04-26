@@ -86,7 +86,27 @@ class SpecContext extends AbstractContext
         $example->setParent($this->__stack->top());
         $this->__stack->top()->add($example);
         return $example;
-    } 
+    }
+
+    /**
+     * Before Context
+     *
+     * @param $closure
+     */
+    public function beforeContext($closure)
+    {
+        $this->__stack->top()->add(new Hook('beforeContext', $closure));
+    }
+
+    /**
+     * After Context
+     *
+     * @param $closure
+     */
+    public function afterContext($closure)
+    {
+        $this->__stack->top()->add(new Hook('afterContext', $closure));
+    }
 
     /**
      * Before Each

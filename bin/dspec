@@ -26,6 +26,14 @@ if (!getenv('DSPEC_NO_GLOBALS')) {
         ds::context($context, $closure);
     }
 
+    function beforeContext(\Closure $closure) {
+        ds::beforeContext($closure);
+    }
+
+    function afterContext(\Closure $closure) {
+        ds::afterContext($closure);
+    }
+
     function beforeEach(\Closure $closure) {
         ds::beforeEach($closure);
     }

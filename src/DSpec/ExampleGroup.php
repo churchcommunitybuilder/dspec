@@ -19,6 +19,8 @@ class ExampleGroup extends Node
     protected $context;
     protected $examples = array();
     protected $hooks = array(
+        'beforeContext' => array(),
+        'afterContext' => array(),
         'beforeEach' => array(),
         'afterEach' => array(),
     );
@@ -36,21 +38,27 @@ class ExampleGroup extends Node
     /**
      * {@inheritDoc}
      */
-    public function run(Reporter $reporter)
+    public function run(Reporter $reporter, $context = null)
     {
         $this->startTimer();
         $this->setErrorHandler();
+
+        if ($context === null) {
+            $context = clone $this->context;
+        }
+        $this->runHooks('beforeContext', $context, false, false);
+
         foreach ($this->examples as $example) {
 
             if ($example instanceof ExampleGroup) {
-                $example->run($reporter);
+                $example->run($reporter, $context);
                 continue;
             }
 
             $example->startTimer();
 
             try {
-                $context = clone $this->context;
+                $context = clone $context;
                 $this->runHooks('beforeEach', $context);
                 $example->run($context);
                 $this->runHooks('afterEach', $context, true);
@@ -70,6 +78,9 @@ class ExampleGroup extends Node
 
             $example->endTimer();
         }
+
+        $this->runHooks('afterContext', $context, false, false);
+
         $this->restoreErrorHandler();
         $this->endTimer();
     }
@@ -79,7 +90,7 @@ class ExampleGroup extends Node
      *
      * @param string $name
      */
-    public function runHooks($name, AbstractContext $context, $reverse = false)
+    public function runHooks($name, AbstractContext $context, $reverse = false, $traverseParent = true)
     {
         $parent = $this->getParent();
         $hooks = $this->hooks[$name];
@@ -88,11 +99,11 @@ class ExampleGroup extends Node
             foreach (array_reverse($hooks) as $hook) {
                 $hook->run($context); 
             }
-            if ($parent) {
+            if ($parent && $traverseParent) {
                 $parent->runHooks($name, $context, $reverse);
             }
         } else {
-            if ($parent) {
+            if ($parent && $traverseParent) {
                 $parent->runHooks($name, $context, $reverse);
             }
             foreach ($hooks as $hook) {
