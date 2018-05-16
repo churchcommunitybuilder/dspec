@@ -114,8 +114,7 @@ class ExampleGroup extends Node
                     if ($res === -1 || $res > 0) {
                         unset($this->childPids[$pid]);
 
-                        $exitStatus = pcntl_wexitstatus($pid);
-                        if ($exitStatus !== 0) {
+                        if ($status !== 0) {
                             Reporter::$hasFailure = true;
                         }
                     }
