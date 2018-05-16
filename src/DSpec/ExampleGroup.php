@@ -15,6 +15,8 @@ use DSpec\Context\AbstractContext;
 
 class ExampleGroup extends Node 
 {
+    protected static $hasForked = false;
+
     protected $parent;
     protected $context;
     protected $examples = array();
@@ -35,10 +37,36 @@ class ExampleGroup extends Node
         $this->parent = $parent;
     }
 
+    private $childPids = [];
+
     /**
      * {@inheritDoc}
      */
     public function run(Reporter $reporter, AbstractContext $parentContext = null)
+    {
+        if ($parentContext !== null || !$this->shouldFork()) {
+            return $this->runNonThreaded($reporter, $parentContext);
+        }
+
+        return $this->runThreaded($reporter, $parentContext);
+    }
+
+    private function shouldFork()
+    {
+        return !self::$hasForked && function_exists('pcntl_fork') && getenv('DSPEC_FORK') == '1';
+    }
+
+    private function getNumChildren()
+    {
+        $dspecChildren = intval(getenv('DSPEC_CHILDREN'));
+        if ($dspecChildren > 0) {
+            return $dspecChildren;
+        }
+
+        return 2;
+    }
+
+    private function runThreaded(Reporter $reporter, AbstractContext $parentContext = null)
     {
         $this->startTimer();
         $this->setErrorHandler();
@@ -50,7 +78,78 @@ class ExampleGroup extends Node
 
         $this->runHooks('beforeContext', $thisContextClone, false, false);
 
-        foreach ($this->examples as $example) {
+        if (count($this->examples) < 2) {
+            $this->doRun($reporter, $this->examples, $thisContextClone);
+        } else {
+            $childrenPids = [];
+            $numChildren = min(count($this->examples), $this->getNumChildren());
+            $sliceLength = ceil(count($this->examples) / $numChildren);
+            for ($i = 0; $i < $numChildren; $i++) {
+                self::$hasForked = true;
+                $pid = pcntl_fork();
+
+                if ($pid === 0 || $pid === false) {
+                    $examples = array_slice($this->examples, $i * $sliceLength, $sliceLength);
+
+                    $exampleGroup = new self($this->title, $thisContextClone, $this);
+                    $exampleGroup->examples = $examples;
+                    $exampleGroup->startTime = $this->startTime;
+
+                    $ret = $exampleGroup->run($reporter, $parentContext);
+                    $this->runHooks('afterContext', $thisContextClone, true, false);
+
+                    $this->restoreErrorHandler();
+                    $this->endTimer();
+
+                    return $ret;
+                } else {
+                    $this->childPids[$pid] = $pid;
+                }
+            }
+
+            do {
+                foreach ($this->childPids as $pid) {
+                    $res = pcntl_waitpid($pid, $status, WNOHANG);
+
+                    if ($res === -1 || $res > 0) {
+                        unset($this->childPids[$pid]);
+
+                        $exitStatus = pcntl_wexitstatus($pid);
+                        if ($exitStatus !== 0) {
+                            Reporter::$hasFailure = true;
+                        }
+                    }
+                }
+            } while (count($this->childPids) > 0);
+        }
+
+        $this->restoreErrorHandler();
+        $this->endTimer();
+    }
+
+    private function runNonThreaded(Reporter $reporter, AbstractContext $parentContext = null)
+    {
+        $this->startTimer();
+        $this->setErrorHandler();
+
+        $thisContextClone = clone $this->context;
+        if ($parentContext !== null) {
+            $thisContextClone->setParentContext($parentContext);
+        }
+
+        $this->runHooks('beforeContext', $thisContextClone, false, false);
+
+        $this->doRun($reporter, $this->examples, $thisContextClone);
+
+        $this->runHooks('afterContext', $thisContextClone, true, false);
+
+        $this->restoreErrorHandler();
+        $this->endTimer();
+    }
+
+    private function doRun(Reporter $reporter, array $examples, $thisContextClone)
+    {
+        foreach ($examples as $example) {
 
             if ($example instanceof ExampleGroup) {
                 $example->run($reporter, $thisContextClone);
@@ -80,11 +179,6 @@ class ExampleGroup extends Node
 
             $example->endTimer();
         }
-
-        $this->runHooks('afterContext', $thisContextClone, true, false);
-
-        $this->restoreErrorHandler();
-        $this->endTimer();
     }
 
     /**

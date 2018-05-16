@@ -21,6 +21,8 @@ use DSpec\Events;
 
 class Reporter
 {
+    public static $hasFailure = false;
+
     protected $failures = array();
     protected $passes = array();
     protected $pending = array();
@@ -39,6 +41,7 @@ class Reporter
      */
     public function exampleFailed(Example $example)
     {
+        self::$hasFailure = true;
         $this->failures[] = $example;
         $event = new ExampleFailEvent($example);
         $this->dispatcher->dispatch(Events::EXAMPLE_FAIL, $event);

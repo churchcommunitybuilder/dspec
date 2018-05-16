@@ -93,7 +93,11 @@ class Progress extends AbstractFormatter implements FormatterInterface
      */
     protected function writeProgress($string)
     {
-        $this->output->write($string, ++$this->counter % 80 == 0);
+        if (getenv('DSPEC_FORK') == '1') {
+            $this->output->write($string);
+        } else {
+            $this->output->write($string, ++$this->counter % 80 == 0);
+        }
     }
 
 }

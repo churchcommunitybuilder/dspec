@@ -178,6 +178,9 @@ class DSpecCommand extends Command
             $f->format($reporter, $suite, $config->verbose);
         }
 
+        if (getenv('DSPEC_FORK') == '1') {
+            return Reporter::$hasFailure ? 1 : 0;
+        }
         return count($reporter->getFailures()) ? 1 : 0;
     }
 
