@@ -7,6 +7,7 @@ use DSpec\ExampleGroup;
 use DSpec\Example;
 use DSpec\Hook;
 use DSpec\Expectation\Subject;
+use DSpec\Exception\SkippedExampleException;
 
 /**
  * This file is part of dspec
@@ -54,6 +55,18 @@ class SpecContext extends AbstractContext
         return $group;
     }
 
+    public function xdescribe($description, \Closure $closure)
+    {
+        $that = $this;
+        $skippedClosure = function() use ($that, $closure) {
+            beforeEach(function() use ($that) {
+                $that->skip();
+            });
+            $closure();
+        };
+        return $this->describe($description, $skippedClosure);
+    }
+
     /**
      * Proxy to Describe
      *
@@ -63,6 +76,11 @@ class SpecContext extends AbstractContext
     public function context($description, \Closure $closure)
     {
         return $this->describe($description, $closure);
+    }
+
+    public function xcontext($description, \Closure $closure)
+    {
+        return $this->xdescribe($description, $closure);
     }
 
     /**
@@ -92,6 +110,13 @@ class SpecContext extends AbstractContext
         $example->setParent($this->__stack->top());
         $this->__stack->top()->add($example);
         return $example;
+    }
+
+    public function xit($example, \Closure $closure = null)
+    {
+        return $this->it($description, function() {
+            throw new SkippedExampleException();
+        });
     }
 
     /**
