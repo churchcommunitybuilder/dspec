@@ -22,12 +22,12 @@ if (!getenv('DSPEC_NO_GLOBALS')) {
         ds::let($id, $closure);
     }
 
-    function it($example, \Closure $closure = null) {
-        ds::it($example, $closure);
+    function it($example = null, \Closure $closure = null) {
+        return ds::it($example, $closure);
     }
 
-    function xit($example, \Closure $closure = null) {
-        ds::xit($example, $closure);
+    function xit($example = null, \Closure $closure = null) {
+        return ds::xit($example, $closure);
     }
 
     function context($context, \Closure $closure) {

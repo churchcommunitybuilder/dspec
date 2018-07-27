@@ -44,6 +44,10 @@ class ExampleGroup extends Node
      */
     public function run(Reporter $reporter, AbstractContext $parentContext = null)
     {
+        if ($this->context->hasOnly()) {
+            return $this->runNonThreaded($reporter, $parentContext);
+        }
+
         if ($parentContext !== null || !$this->shouldFork()) {
             return $this->runNonThreaded($reporter, $parentContext);
         }
@@ -138,7 +142,8 @@ class ExampleGroup extends Node
 
         $this->runHooks('beforeContext', $thisContextClone, false, false);
 
-        $this->doRun($reporter, $this->examples, $thisContextClone);
+        $parentHasOnly = $parentContext ? $parentContext->hasOnly() : false;
+        $this->doRun($reporter, $this->examples, $thisContextClone, $parentHasOnly);
 
         $this->runHooks('afterContext', $thisContextClone, true, false);
 
@@ -146,9 +151,23 @@ class ExampleGroup extends Node
         $this->endTimer();
     }
 
-    private function doRun(Reporter $reporter, array $examples, $thisContextClone)
+    private function hasOnly()
+    {
+        foreach ($this->examples as $example) {
+            if ($example->hasOnly()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function doRun(Reporter $reporter, array $examples, $thisContextClone, $parentHasOnly = false)
     {
         foreach ($examples as $example) {
+            if ($parentHasOnly && !$example->hasOnly()) {
+                continue;
+            }
 
             if ($example instanceof ExampleGroup) {
                 $example->run($reporter, $thisContextClone);

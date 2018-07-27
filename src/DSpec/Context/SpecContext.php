@@ -25,6 +25,8 @@ class SpecContext extends AbstractContext
      */
     protected $__stack;
 
+    protected $hasOnly = false;
+
     /**
      */
     public function __construct()
@@ -100,8 +102,12 @@ class SpecContext extends AbstractContext
      * @param string $example
      * @param Closure $closure
      */
-    public function it($example, \Closure $closure = null)
+    public function it($example = null, \Closure $closure = null)
     {
+        if ($example === null && $closure === null) {
+            return new TestWrapper($example, $closure, $this);
+        }
+
         if ($closure === null) {
             $that = $this;
             $closure = function() use ($that) { $that->pending(); };
@@ -112,11 +118,39 @@ class SpecContext extends AbstractContext
         return $example;
     }
 
-    public function xit($example, \Closure $closure = null)
+    public function xit($example = null, \Closure $closure = null)
     {
-        return $this->it($description, function() {
+        return $this->it($example, function() {
             throw new SkippedExampleException();
         });
+    }
+
+    public function only($example, \Closure $closure = null)
+    {
+        if ($closure === null) {
+            $that = $this;
+            $closure = function() use ($that) { $that->pending(); };
+        }
+
+        $example = new Example($example, $closure);
+        $example->setParent($this->__stack->top());
+        $example->markOnly();
+        $this->markHasOnly();
+        $this->__stack->top()->add($example);
+        return $example;
+    }
+
+    public function hasOnly()
+    {
+        return $this->hasOnly;
+    }
+
+    protected function markHasOnly()
+    {
+        $this->hasOnly = true;
+        if ($this->__parentContext) {
+            $this->__parentContext->markHasOnly();
+        }
     }
 
     /**

@@ -27,11 +27,22 @@ class Example extends Node
     protected $skippedMessage;
     protected $startTime;
     protected $endTime;
+    protected $only = false;
 
     public function __construct($example, \Closure $closure)
     {
         $this->title = $example;
         $this->closure = $closure;
+    }
+
+    public function hasOnly()
+    {
+        return $this->only;
+    }
+
+    public function markOnly()
+    {
+        $this->only = true;
     }
 
     /**
