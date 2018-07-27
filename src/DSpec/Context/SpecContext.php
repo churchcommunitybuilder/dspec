@@ -125,6 +125,16 @@ class SpecContext extends AbstractContext
         });
     }
 
+    public function test($example = null, \Closure $closure = null)
+    {
+        return $this->it($example, $closure);
+    }
+
+    public function xtest($example = null, \Closure $closure = null)
+    {
+        return $this-xit($example, $closure);
+    }
+
     public function only($example, \Closure $closure = null)
     {
         if ($closure === null) {
