@@ -123,4 +123,20 @@ class AbstractContext
     {
         unset($this->__data[$name]);
     }
+
+    public function __call($name, array $args)
+    {
+        $fn = $this->{$name};
+
+        if (is_callable($fn)) {
+            return $fn(...$args);
+        }
+        $trace = debug_backtrace();
+        trigger_error(
+            $name . ' is not a callable'.
+            ' in ' . $trace[0]['file'] .
+            ' on line ' . $trace[0]['line'],
+            E_USER_NOTICE);
+        return null;
+    }
 }
