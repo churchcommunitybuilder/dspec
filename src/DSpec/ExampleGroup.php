@@ -28,6 +28,7 @@ class ExampleGroup extends Node
     );
     protected $startTime;
     protected $endTime;
+    protected $markedHasOnly = false;
 
 
     public function __construct($description, AbstractContext $context, ExampleGroup $parent = null)
@@ -39,13 +40,18 @@ class ExampleGroup extends Node
 
     private $childPids = [];
 
+    public function markHasOnly()
+    {
+        $this->markedHasOnly = true;
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function run(Reporter $reporter, AbstractContext $parentContext = null, $parentHasOnly = false)
+    public function run(Reporter $reporter, AbstractContext $parentContext = null, $parentHasOnly = false, $parentMarkedHasOnly = false)
     {
-        if ($this->context->hasOnly() || $parentHasOnly) {
-            return $this->runNonThreaded($reporter, $parentContext, $parentHasOnly);
+        if ($this->context->hasOnly() || $parentHasOnly || $parentMarkedHasOnly) {
+            return $this->runNonThreaded($reporter, $parentContext, $parentHasOnly, $parentMarkedHasOnly);
         }
 
         if ($parentContext !== null || !$this->shouldFork()) {
@@ -130,8 +136,12 @@ class ExampleGroup extends Node
         $this->endTimer();
     }
 
-    private function runNonThreaded(Reporter $reporter, AbstractContext $parentContext = null, $parentHasOnly = false)
-    {
+    private function runNonThreaded(
+        Reporter $reporter,
+        AbstractContext $parentContext = null,
+        $parentHasOnly = false,
+        $parentMarkedHasOnly = false
+    ) {
         $this->startTimer();
         $this->setErrorHandler();
 
@@ -143,7 +153,8 @@ class ExampleGroup extends Node
         $this->runHooks('beforeContext', $thisContextClone, false, false);
 
         $parentHasOnly = $parentHasOnly || ($parentContext ? $parentContext->hasOnly() : false);
-        $this->doRun($reporter, $this->examples, $thisContextClone, $parentHasOnly);
+
+        $this->doRun($reporter, $this->examples, $thisContextClone, $parentHasOnly, $parentMarkedHasOnly);
 
         $this->runHooks('afterContext', $thisContextClone, true, false);
 
@@ -153,6 +164,10 @@ class ExampleGroup extends Node
 
     private function hasOnly()
     {
+        if ($this->markedHasOnly) {
+            return true;
+        }
+
         foreach ($this->examples as $example) {
             if ($example->hasOnly()) {
                 return true;
@@ -162,15 +177,34 @@ class ExampleGroup extends Node
         return false;
     }
 
-    private function doRun(Reporter $reporter, array $examples, $thisContextClone, $parentHasOnly = false)
-    {
+    private function doRun(
+        Reporter $reporter,
+        array $examples,
+        $thisContextClone,
+        $parentHasOnly = false,
+        $parentMarkedHasOnly = false
+    ) {
+        $runAllExamples = false;
+        if ($this->markedHasOnly || $parentMarkedHasOnly) {
+            foreach ($examples as $example) {
+                if ($example->hasOnly()) {
+                    break;
+                }
+            }
+            $runAllExamples = true;
+        }
+
         foreach ($examples as $example) {
-            if ($parentHasOnly && !$example->hasOnly()) {
+            if (!$runAllExamples && $parentHasOnly && !$example->hasOnly()) {
+                if (!$example instanceof ExampleGroup) {
+                    $example->skipped('{no message}');
+                    $reporter->exampleSkipped($example);
+                }
                 continue;
             }
 
             if ($example instanceof ExampleGroup) {
-                $example->run($reporter, $thisContextClone, $parentHasOnly);
+                $example->run($reporter, $thisContextClone, $parentHasOnly, $this->markedHasOnly || $parentMarkedHasOnly);
                 continue;
             }
 

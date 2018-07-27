@@ -40,8 +40,12 @@ class SpecContext extends AbstractContext
      * @param string $description - The thing we're describing
      * @param Closure $closure - How we're describing it
      */
-    public function describe($description, \Closure $closure)
+    public function describe($description = null, \Closure $closure = null)
     {
+        if ($description === null && $closure === null) {
+            return new OnlyWrapper($description, $closure, $this, false);
+        }
+
         $context = clone $this;
 
         $parent = $this->__stack->top();
@@ -75,7 +79,7 @@ class SpecContext extends AbstractContext
      * @param string $description
      * @param Closure $closure
      */
-    public function context($description, \Closure $closure)
+    public function context($description = null, \Closure $closure = null)
     {
         return $this->describe($description, $closure);
     }
@@ -105,7 +109,7 @@ class SpecContext extends AbstractContext
     public function it($example = null, \Closure $closure = null)
     {
         if ($example === null && $closure === null) {
-            return new TestWrapper($example, $closure, $this);
+            return new OnlyWrapper($example, $closure, $this, true);
         }
 
         if ($closure === null) {
@@ -135,19 +139,37 @@ class SpecContext extends AbstractContext
         return $this-xit($example, $closure);
     }
 
-    public function only($example, \Closure $closure = null)
+    public function only($example, \Closure $closure = null, $test)
     {
-        if ($closure === null) {
-            $that = $this;
-            $closure = function() use ($that) { $that->pending(); };
-        }
+        if ($test) {
+            if ($closure === null) {
+                $that = $this;
+                $closure = function() use ($that) { $that->pending(); };
+            }
 
-        $example = new Example($example, $closure);
-        $example->setParent($this->__stack->top());
-        $example->markOnly();
-        $this->markHasOnly();
-        $this->__stack->top()->add($example);
-        return $example;
+            $example = new Example($example, $closure);
+            $example->setParent($this->__stack->top());
+            $example->markOnly();
+            $this->markHasOnly();
+            $this->__stack->top()->add($example);
+            return $example;
+        } else {
+            $context = clone $this;
+
+            $parent = $this->__stack->top();
+            if ($parent) {
+                $context->setParentContext($parent->getContext());
+            }
+
+            $group = new ExampleGroup($example, $context, $parent);
+            $this->__stack->top()->add($group);
+            $this->__stack->push($group);
+            $this->markHasOnly();
+            $group->markHasOnly();
+            $context->run($closure);
+            $this->__stack->pop();
+            return $group;
+        }
     }
 
     public function hasOnly()

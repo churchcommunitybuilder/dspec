@@ -10,12 +10,12 @@ if (is_file(__DIR__ . '/../../../autoload.php')) {
 use DSpec\DSpec as ds;
 
 if (!getenv('DSPEC_NO_GLOBALS')) {
-    function describe($description, \Closure $closure) {
-        ds::describe($description, $closure);
+    function describe($description = null, \Closure $closure = null) {
+        return ds::describe($description, $closure);
     }
 
     function xdescribe($description, \Closure $closure) {
-        ds::xdescribe($description, $closure);
+        return ds::xdescribe($description, $closure);
     }
 
     function let($id, \Closure $closure) {
@@ -38,8 +38,8 @@ if (!getenv('DSPEC_NO_GLOBALS')) {
         return ds::xtest($example, $closure);
     }
 
-    function context($context, \Closure $closure) {
-        ds::context($context, $closure);
+    function context($context = null, \Closure $closure = null) {
+        return ds::context($context, $closure);
     }
 
     function xcontext($context, \Closure $closure) {
