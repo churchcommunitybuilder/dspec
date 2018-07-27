@@ -42,10 +42,10 @@ class ExampleGroup extends Node
     /**
      * {@inheritDoc}
      */
-    public function run(Reporter $reporter, AbstractContext $parentContext = null)
+    public function run(Reporter $reporter, AbstractContext $parentContext = null, $parentHasOnly = false)
     {
-        if ($this->context->hasOnly()) {
-            return $this->runNonThreaded($reporter, $parentContext);
+        if ($this->context->hasOnly() || $parentHasOnly) {
+            return $this->runNonThreaded($reporter, $parentContext, $parentHasOnly);
         }
 
         if ($parentContext !== null || !$this->shouldFork()) {
@@ -130,7 +130,7 @@ class ExampleGroup extends Node
         $this->endTimer();
     }
 
-    private function runNonThreaded(Reporter $reporter, AbstractContext $parentContext = null)
+    private function runNonThreaded(Reporter $reporter, AbstractContext $parentContext = null, $parentHasOnly = false)
     {
         $this->startTimer();
         $this->setErrorHandler();
@@ -142,7 +142,7 @@ class ExampleGroup extends Node
 
         $this->runHooks('beforeContext', $thisContextClone, false, false);
 
-        $parentHasOnly = $parentContext ? $parentContext->hasOnly() : false;
+        $parentHasOnly = $parentHasOnly || ($parentContext ? $parentContext->hasOnly() : false);
         $this->doRun($reporter, $this->examples, $thisContextClone, $parentHasOnly);
 
         $this->runHooks('afterContext', $thisContextClone, true, false);
@@ -170,7 +170,7 @@ class ExampleGroup extends Node
             }
 
             if ($example instanceof ExampleGroup) {
-                $example->run($reporter, $thisContextClone);
+                $example->run($reporter, $thisContextClone, $parentHasOnly);
                 continue;
             }
 
