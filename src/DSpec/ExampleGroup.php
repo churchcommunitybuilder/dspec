@@ -88,11 +88,16 @@ class ExampleGroup extends Node
 
         $this->runHooks('beforeContext', $thisContextClone, false, false);
 
-        if (count($this->examples) < 2) {
+        $numExampleGroups = 0;
+        foreach ($this->examples as $e) {
+            if ($e instanceof ExampleGroup) {
+                $numExampleGroups += 1;
+            }
+        }
+        if ($numExampleGroups < 10) {
             $this->doRun($reporter, $this->examples, $thisContextClone);
         } else {
-            $childrenPids = [];
-            $numChildren = min(count($this->examples), $this->getNumChildren());
+            $numChildren = min($numExampleGroups, $this->getNumChildren());
             $sliceLength = ceil(count($this->examples) / $numChildren);
             for ($i = 0; $i < $numChildren; $i++) {
                 self::$hasForked = true;
