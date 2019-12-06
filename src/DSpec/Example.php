@@ -54,7 +54,7 @@ class Example extends Node
     }
 
     /**
-     * @return \Exception
+     * @return \Throwable
      */
     public function getFailureException()
     {
@@ -66,7 +66,7 @@ class Example extends Node
      *
      * @return Example
      */
-    public function failed(\Exception $e = null)
+    public function failed(\Throwable $e = null)
     {
         $this->result = static::RESULT_FAILED;
         if ($e !== null) {
