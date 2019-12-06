@@ -13,7 +13,7 @@ use DSpec\Context\AbstractContext;
  * file that was distributed with this source code.
  */
 
-class ExampleGroup extends Node 
+class ExampleGroup extends Node
 {
     protected static $hasForked = false;
 
@@ -229,7 +229,7 @@ class ExampleGroup extends Node
             } catch (Exception\SkippedExampleException $e) {
                 $example->skipped($e->getMessage());
                 $reporter->exampleSkipped($example);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $example->failed($e);
                 $reporter->exampleFailed($example);
             }
@@ -248,9 +248,9 @@ class ExampleGroup extends Node
         $parent = $this->getParent();
         $hooks = $this->hooks[$name];
 
-        if ($reverse) { 
+        if ($reverse) {
             foreach (array_reverse($hooks) as $hook) {
-                $hook->run($context); 
+                $hook->run($context);
             }
             if ($parent && $traverseParent) {
                 $parent->runHooks($name, $context, $reverse);
@@ -260,9 +260,9 @@ class ExampleGroup extends Node
                 $parent->runHooks($name, $context, $reverse);
             }
             foreach ($hooks as $hook) {
-                $hook->run($context); 
+                $hook->run($context);
             }
-        } 
+        }
     }
 
     public function add($object)
