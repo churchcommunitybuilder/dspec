@@ -240,7 +240,7 @@ class SpecContext extends AbstractContext
 
         foreach($files as $f)
         {
-            if ($dispatcher) $dispatcher->dispatch(Events::COMPILER_FILE, new FileEvent($f));
+            if ($dispatcher) $dispatcher->dispatch(new FileEvent($f), Events::COMPILER_FILE);
 
             include $f;
         }

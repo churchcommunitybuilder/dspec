@@ -46,7 +46,7 @@ class Reporter
         self::$hasFailure = true;
         $this->failures[] = $example;
         $event = new ExampleFailEvent($example);
-        $this->dispatcher->dispatch(Events::EXAMPLE_FAIL, $event);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_FAIL);
     }
 
     /**
@@ -58,7 +58,7 @@ class Reporter
     {
         $this->passes[] = $example;
         $event = new ExamplePassEvent($example);
-        $this->dispatcher->dispatch(Events::EXAMPLE_PASS, $event);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_PASS);
     }
 
     /**
@@ -70,7 +70,7 @@ class Reporter
     {
         $this->pending[] = $example;
         $event = new ExamplePendEvent($example);
-        $this->dispatcher->dispatch(Events::EXAMPLE_PEND, $event);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_PEND);
     }
 
     /**
@@ -82,31 +82,31 @@ class Reporter
     {
         $this->skipped[] = $example;
         $event = new ExampleSkipEvent($example);
-        $this->dispatcher->dispatch(Events::EXAMPLE_SKIP, $event);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_SKIP);
     }
 
     public function exampleGroupStart(ExampleGroup $exampleGroup)
     {
         $event = new ExampleGroupEvent($exampleGroup);
-        $this->dispatcher->dispatch(Events::EXAMPLE_GROUP_START, $event);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_GROUP_START);
     }
 
     public function exampleGroupEnd(ExampleGroup $exampleGroup)
     {
         $event = new ExampleGroupEvent($exampleGroup);
-        $this->dispatcher->dispatch(Events::EXAMPLE_GROUP_END, $event);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_GROUP_END);
     }
 
     public function exampleStart(Example $example)
     {
         $event = new ExampleEvent($example);
-        $this->dispatcher->dispatch(Events::EXAMPLE_START, $event);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_START);
     }
 
     public function exampleEnd(Example $example)
     {
         $event = new ExampleEvent($example);
-        $this->dispatcher->dispatch(Events::EXAMPLE_END, $event);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_END);
     }
 
     /**
