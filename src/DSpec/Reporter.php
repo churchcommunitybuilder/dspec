@@ -8,6 +8,8 @@ use DSpec\Event\ExampleFailEvent;
 use DSpec\Event\ExamplePassEvent;
 use DSpec\Event\ExamplePendEvent;
 use DSpec\Event\ExampleSkipEvent;
+use DSpec\Event\ExampleGroupEvent;
+use DSpec\Event\ExampleEvent;
 use DSpec\Events;
 
 /**
