@@ -189,6 +189,7 @@ class ExampleGroup extends Node
         $parentHasOnly = false,
         $parentMarkedHasOnly = false
     ) {
+        $reporter->exampleGroupStart($this);
         $runAllExamples = false;
         if ($this->markedHasOnly || $parentMarkedHasOnly) {
             foreach ($examples as $example) {
@@ -213,6 +214,7 @@ class ExampleGroup extends Node
                 continue;
             }
 
+            $reporter->exampleStart($example);
             $example->startTimer();
 
             try {
@@ -235,7 +237,9 @@ class ExampleGroup extends Node
             }
 
             $example->endTimer();
+            $reporter->exampleEnd($example);
         }
+        $reporter->exampleGroupEnd($this);
     }
 
     /**

@@ -83,6 +83,30 @@ class Reporter
         $this->dispatcher->dispatch($event, Events::EXAMPLE_SKIP);
     }
 
+    public function exampleGroupStart(ExampleGroup $exampleGroup)
+    {
+        $event = new ExampleGroupEvent($exampleGroup);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_GROUP_START);
+    }
+
+    public function exampleGroupEnd(ExampleGroup $exampleGroup)
+    {
+        $event = new ExampleGroupEvent($exampleGroup);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_GROUP_END);
+    }
+
+    public function exampleStart(Example $example)
+    {
+        $event = new ExampleEvent($example);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_START);
+    }
+
+    public function exampleEnd(Example $example)
+    {
+        $event = new ExampleEvent($example);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_END);
+    }
+
     /**
      * Get passing examples
      *
