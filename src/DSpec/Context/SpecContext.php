@@ -2,12 +2,15 @@
 
 namespace DSpec\Context;
 
+use DSpec\Event\FileEvent;
+use DSpec\Events;
 use SplStack;
 use DSpec\ExampleGroup;
 use DSpec\Example;
 use DSpec\Hook;
 use DSpec\Expectation\Subject;
 use DSpec\Exception\SkippedExampleException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * This file is part of dspec
@@ -18,7 +21,7 @@ use DSpec\Exception\SkippedExampleException;
  * file that was distributed with this source code.
  */
 
-class SpecContext extends AbstractContext 
+class SpecContext extends AbstractContext
 {
     /**
      * Prefixed to avoid clashes with execution scope
@@ -90,7 +93,7 @@ class SpecContext extends AbstractContext
     }
 
     /**
-     * Let 
+     * Let
      *
      * @param string $name
      * @param \Closure $closure
@@ -229,7 +232,7 @@ class SpecContext extends AbstractContext
      * @param array $files
      * @return ExampleGroup
      */
-    public function load(array $files, ExampleGroup $eg = null)
+    public function load(array $files, ExampleGroup $eg = null, EventDispatcherInterface $dispatcher = null)
     {
         $eg = $eg ?: new ExampleGroup("Suite", $this);
 
@@ -237,6 +240,8 @@ class SpecContext extends AbstractContext
 
         foreach($files as $f)
         {
+            if ($dispatcher) $dispatcher->dispatch(Events::COMPILER_FILE, new FileEvent($f));
+
             include $f;
         }
 

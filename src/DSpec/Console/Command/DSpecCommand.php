@@ -163,16 +163,17 @@ class DSpecCommand extends Command
          * The reporter could dispatch these events, assuming the example group
          * alerts it to example group start/finish
          */
-        $container['dispatcher']->dispatch(new Event(), Events::COMPILER_START);
-        $context->load($files, $suite);
-        $container['dispatcher']->dispatch(new Event(), Events::COMPILER_END);
+        $dispatcher = $container['dispatcher'];
+        $dispatcher->dispatch(Events::COMPILER_START, new Event());
+        $context->load($files, $suite, $dispatcher);
+        $dispatcher->dispatch(Events::COMPILER_END, new Event());
 
-        $container['dispatcher']->dispatch(new SuiteStartEvent($suite), Events::SUITE_START);
+        $container['dispatcher']->dispatch(Events::SUITE_START, new SuiteStartEvent($suite));
         $repeat = $input->getOption('repeat') ?: 1;
         for ($i = 0; $i < $repeat; $i++) {
             $suite->run($reporter);
         }
-        $container['dispatcher']->dispatch(new SuiteEndEvent($suite, $reporter), Events::SUITE_END);
+        $container['dispatcher']->dispatch(Events::SUITE_END, new SuiteEndEvent($suite, $reporter));
 
         foreach($formatters as $f) {
             $f->format($reporter, $suite, $config->verbose);

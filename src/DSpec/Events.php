@@ -19,6 +19,7 @@ class Events
     const EXAMPLE_SKIP = 'example.skip';
 
     const COMPILER_START = 'compiler.start';
+    const COMPILER_FILE = 'compiler.file';
     const COMPILER_END   = 'compiler.end';
 
     const SUITE_START = 'suite.start';
