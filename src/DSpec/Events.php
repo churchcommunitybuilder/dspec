@@ -23,4 +23,10 @@ class Events
 
     const SUITE_START = 'suite.start';
     const SUITE_END   = 'suite.end';
+
+    const EXAMPLE_GROUP_START = 'example_group.start';
+    const EXAMPLE_GROUP_END = 'example_group.end';
+
+    const EXAMPLE_START = 'example.start';
+    const EXAMPLE_END = 'example.end';
 }
