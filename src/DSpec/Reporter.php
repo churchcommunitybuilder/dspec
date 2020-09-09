@@ -2,13 +2,12 @@
 
 namespace DSpec;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use DSpec\Event\ExampleFailEvent;
+use DSpec\Event\ExampleGroupEvent;
 use DSpec\Event\ExamplePassEvent;
 use DSpec\Event\ExamplePendEvent;
 use DSpec\Event\ExampleSkipEvent;
-use DSpec\Events;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * This file is part of dspec
