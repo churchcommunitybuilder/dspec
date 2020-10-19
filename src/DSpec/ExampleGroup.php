@@ -368,7 +368,7 @@ class ExampleGroup extends Node
     public function setErrorHandler()
     {
         set_error_handler(function ($errno, $errstr, $errfile, $errline ) {
-            if ($errorno === E_NOTICE) {
+            if (!(error_reporting() & $errno)) {
                 return;
             }
 
