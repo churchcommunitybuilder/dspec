@@ -368,6 +368,10 @@ class ExampleGroup extends Node
     public function setErrorHandler()
     {
         set_error_handler(function ($errno, $errstr, $errfile, $errline ) {
+            if ($errorno === E_NOTICE) {
+                return;
+            }
+
             throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
         });
     }
