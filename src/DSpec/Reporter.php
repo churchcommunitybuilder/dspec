@@ -9,6 +9,7 @@ use DSpec\Event\ExamplePassEvent;
 use DSpec\Event\ExamplePendEvent;
 use DSpec\Event\ExampleSkipEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use DSpec\Events;
 
 /**
  * This file is part of dspec
@@ -33,54 +34,55 @@ class Reporter
 		$this->dispatcher = $dispatcher;
 	}
 
-	/**
-	 * An example failed
-	 *
-	 * @param Example $example
-	 */
-	public function exampleFailed(Example $example)
-	{
-		self::$hasFailure = true;
-		$this->failures[] = $example;
-		$event = new ExampleFailEvent($example);
-		$this->dispatcher->dispatch(Events::EXAMPLE_FAIL, $event);
-	}
 
-	/**
-	 * An example passed
-	 *
-	 * @param Example $example
-	 */
-	public function examplePassed(Example $example)
-	{
-		$this->passes[] = $example;
-		$event = new ExamplePassEvent($example);
-		$this->dispatcher->dispatch(Events::EXAMPLE_PASS, $event);
-	}
+    /**
+     * An example failed
+     *
+     * @param Example $example
+     */
+    public function exampleFailed(Example $example)
+    {
+        self::$hasFailure = true;
+        $this->failures[] = $example;
+        $event = new ExampleFailEvent($example);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_FAIL);
+    }
 
-	/**
-	 * An example is pending
-	 *
-	 * @param Example $example
-	 */
-	public function examplePending(Example $example)
-	{
-		$this->pending[] = $example;
-		$event = new ExamplePendEvent($example);
-		$this->dispatcher->dispatch(Events::EXAMPLE_PEND, $event);
-	}
+    /**
+     * An example passed
+     *
+     * @param Example $example
+     */
+    public function examplePassed(Example $example)
+    {
+        $this->passes[] = $example;
+        $event = new ExamplePassEvent($example);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_PASS);
+    }
 
-	/**
-	 * An example is skipped
-	 *
-	 * @param Example $example
-	 */
-	public function exampleSkipped(Example $example)
-	{
-		$this->skipped[] = $example;
-		$event = new ExampleSkipEvent($example);
-		$this->dispatcher->dispatch(Events::EXAMPLE_SKIP, $event);
-	}
+    /**
+     * An example is pending
+     *
+     * @param Example $example
+     */
+    public function examplePending(Example $example)
+    {
+        $this->pending[] = $example;
+        $event = new ExamplePendEvent($example);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_PEND);
+    }
+
+    /**
+     * An example is skipped
+     *
+     * @param Example $example
+     */
+    public function exampleSkipped(Example $example)
+    {
+        $this->skipped[] = $example;
+        $event = new ExampleSkipEvent($example);
+        $this->dispatcher->dispatch($event, Events::EXAMPLE_SKIP);
+    }
 
 	public function exampleGroupStart(ExampleGroup $exampleGroup)
 	{

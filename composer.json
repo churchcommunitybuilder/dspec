@@ -4,8 +4,6 @@
     "license": "MIT",
 
     "require-dev": {
-        "behat/behat": "*",
-        "davedevelopment/montserrat": "*@dev",
         "mockery/mockery": "*",
         "davedevelopment/hamcrest-php": "*@dev",
         "monolog/monolog": "*",
@@ -13,9 +11,9 @@
     },
 
     "require": {
-        "symfony/console": "~2.1",
-        "symfony/finder": "~2.1",
-        "symfony/event-dispatcher": "~2.1",
+        "symfony/console": "^4.0.0",
+        "symfony/finder": "^4.0.0",
+        "symfony/event-dispatcher": "^4.0.0",
         "pimple/pimple": "~3.0"
     },
 

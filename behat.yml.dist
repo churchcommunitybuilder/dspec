@@ -1,7 +1,0 @@
-default:
-    paths:
-        features: 'features'
-    extensions:
-        Behat\Montserrat\Extension:
-            prepend_paths: ['%behat.paths.base%/bin']
-
