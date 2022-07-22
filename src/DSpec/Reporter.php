@@ -87,25 +87,25 @@ class Reporter
 	public function exampleGroupStart(ExampleGroup $exampleGroup)
 	{
 		$event = new ExampleGroupEvent($exampleGroup);
-		$this->dispatcher->dispatch(Events::EXAMPLE_GROUP_START, $event);
+		$this->dispatcher->dispatch($event, Events::EXAMPLE_GROUP_START);
 	}
 
 	public function exampleGroupEnd(ExampleGroup $exampleGroup)
 	{
 		$event = new ExampleGroupEvent($exampleGroup);
-		$this->dispatcher->dispatch(Events::EXAMPLE_GROUP_END, $event);
+		$this->dispatcher->dispatch($event, Events::EXAMPLE_GROUP_END);
 	}
 
 	public function exampleStart(Example $example)
 	{
 		$event = new ExampleEvent($example);
-		$this->dispatcher->dispatch(Events::EXAMPLE_START, $event);
+		$this->dispatcher->dispatch($event, Events::EXAMPLE_START);
 	}
 
 	public function exampleEnd(Example $example)
 	{
 		$event = new ExampleEvent($example);
-		$this->dispatcher->dispatch(Events::EXAMPLE_END, $event);
+		$this->dispatcher->dispatch($event, Events::EXAMPLE_END);
 	}
 
 	/**

@@ -2,7 +2,7 @@
 
 namespace DSpec\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use DSpec\ExampleGroup;
 
 /**
@@ -14,7 +14,7 @@ use DSpec\ExampleGroup;
  * file that was distributed with this source code.
  */
 
-class SuiteEvent extends Event
+class SuiteEvent extends GenericEvent
 {
     /**
      * @var ExampleGroup

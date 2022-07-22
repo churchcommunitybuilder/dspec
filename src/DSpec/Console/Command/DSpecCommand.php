@@ -8,9 +8,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Finder\Finder;
 use DSpec\Context\SpecContext;
 use DSpec\Reporter;
@@ -20,8 +19,6 @@ use DSpec\DSpec as ds;
 use DSpec\Events;
 use DSpec\Event\SuiteStartEvent;
 use DSpec\Event\SuiteEndEvent;
-use DSpec\Formatter\Progress;
-use DSpec\Provider\ConfigServiceProvider;
 
 /**
  * This file is part of dspec
@@ -164,9 +161,9 @@ class DSpecCommand extends Command
          * alerts it to example group start/finish
          */
         $dispatcher = $container['dispatcher'];
-        $dispatcher->dispatch(new Event(), Events::COMPILER_START);
+        $dispatcher->dispatch(new GenericEvent(), Events::COMPILER_START);
         $context->load($files, $suite, $dispatcher);
-        $dispatcher->dispatch(new Event(), Events::COMPILER_END);
+        $dispatcher->dispatch(new GenericEvent(), Events::COMPILER_END);
 
         $container['dispatcher']->dispatch(new SuiteStartEvent($suite), Events::SUITE_START);
         $repeat = $input->getOption('repeat') ?: 1;

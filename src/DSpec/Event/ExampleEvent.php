@@ -2,7 +2,7 @@
 
 namespace DSpec\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use DSpec\Example;
 
 /**
@@ -14,7 +14,7 @@ use DSpec\Example;
  * file that was distributed with this source code.
  */
 
-class ExampleEvent extends Event
+class ExampleEvent extends GenericEvent
 {
     protected $example;
 

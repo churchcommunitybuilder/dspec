@@ -2,15 +2,6 @@
 
 namespace DSpec\Formatter;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use DSpec\Event\ExampleFailEvent;
-use DSpec\Event\ExamplePassEvent;
-use DSpec\Event\ExamplePendEvent;
-use DSpec\Event\ExampleSkipEvent;
-use DSpec\Events;
 use DSpec\Reporter;
 use DSpec\ExampleGroup;
 
@@ -47,14 +38,14 @@ class Summary extends AbstractFormatter implements FormatterInterface
 
         if ($failureCount) {
             $resultLine = sprintf(
-                "<dspec-bold-fail>✖</dspec-bold-fail> <dspec-fail>%d of %d examples failed</dspec-fail>", 
+                "<dspec-bold-fail>✖</dspec-bold-fail> <dspec-fail>%d of %d examples failed</dspec-fail>",
                 $failureCount,
                 $total
             );
 
         } else {
             $resultLine = sprintf(
-                "<dspec-bold-pass>✔</dspec-bold-pass> <dspec-pass>%d example%s passed</dspec-pass>", 
+                "<dspec-bold-pass>✔</dspec-bold-pass> <dspec-pass>%d example%s passed</dspec-pass>",
                 $passCount,
                 $passCount != 1 ? 's' : ''
             );
@@ -62,14 +53,14 @@ class Summary extends AbstractFormatter implements FormatterInterface
 
         if (count($r->getPending())) {
             $resultLine.= sprintf(
-                ", <dspec-pending>%d pending</dspec-pending>", 
+                ", <dspec-pending>%d pending</dspec-pending>",
                 count($r->getPending())
             );
         }
 
         if (count($r->getSkipped())) {
             $resultLine.= sprintf(
-                ", <dspec-skipped>%d skipped</dspec-skipped>", 
+                ", <dspec-skipped>%d skipped</dspec-skipped>",
                 count($r->getSkipped())
             );
         }

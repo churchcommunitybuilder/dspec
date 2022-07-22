@@ -2,10 +2,6 @@
 
 namespace DSpec\Formatter;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use DSpec\Event\ExampleFailEvent;
 use DSpec\Event\ExamplePassEvent;
 use DSpec\Event\ExamplePendEvent;
@@ -36,7 +32,7 @@ class NyanCat extends AbstractFormatter implements FormatterInterface
         if (!class_exists("NyanCat\Scoreboard")) {
             throw new \InvalidArgumentException("The NyanCat formatter requires the whatthejeff/nyancat-scoreboard library");
         }
-        
+
         $this->scoreboard = new Scoreboard(
             new Cat(),
             new Rainbow(
