@@ -12,9 +12,9 @@
 
     "require": {
         "php": "^7.4 || ^8.0",
-        "symfony/console": "^5.0.0|^6.0.0",
-        "symfony/finder": "^5.0.0|^6.0.0",
-        "symfony/event-dispatcher": "^5.0.0|^6.0.0",
+        "symfony/console": "*",
+        "symfony/finder": "*",
+        "symfony/event-dispatcher": "*",
         "pimple/pimple": "~3.0"
     },
 
