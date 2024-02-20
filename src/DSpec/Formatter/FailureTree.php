@@ -2,15 +2,6 @@
 
 namespace DSpec\Formatter;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use DSpec\Event\ExampleFailEvent;
-use DSpec\Event\ExamplePassEvent;
-use DSpec\Event\ExamplePendEvent;
-use DSpec\Event\ExampleSkipEvent;
-use DSpec\Events;
 use DSpec\Reporter;
 use DSpec\ExampleGroup;
 

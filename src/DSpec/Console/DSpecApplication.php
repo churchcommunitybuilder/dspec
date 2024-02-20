@@ -57,7 +57,7 @@ class DSpecApplication extends Application
 
         $container = $this->getContainer();
 
-        // event dispatcher 
+        // event dispatcher
         $container['dispatcher'] = new EventDispatcher;
         $container['input']  = $input;
         $container['output'] = $output;
@@ -67,7 +67,7 @@ class DSpecApplication extends Application
         /**
          * Process options
          */
-        $this->register(new ConfigServiceProvider(), array(
+        $this->registerProvider(new ConfigServiceProvider(), array(
             'config.path' => $config,
         ));
 
@@ -87,7 +87,7 @@ class DSpecApplication extends Application
          * Should overwrite the profile with command line options here
          */
         $profile = $container['profile'];
-        if ($profile->bootstrap) { 
+        if ($profile->bootstrap) {
             $inc = function() use ($profile) {
                 require $profile->bootstrap;
             };
@@ -102,8 +102,8 @@ class DSpecApplication extends Application
                 if (!class_exists($class)) {
                     throw new \InvalidArgumentException("class:$class not found");
                 }
-            } 
-            $this->register(new $class, (array) $options);
+            }
+            $this->registerProvider(new $class, (array) $options);
         }
 
         $container['dspec.command'] = new DSpecCommand($container);
@@ -115,7 +115,7 @@ class DSpecApplication extends Application
         return parent::doRun($input, $output);
     }
 
-    public function register($provider, array $values = array())
+    public function registerProvider($provider, array $values = array())
     {
         if (!($provider instanceof ServiceProviderInterface)) {
             throw new \InvalidArgumentException(
@@ -146,7 +146,7 @@ class DSpecApplication extends Application
      *
      * @return InputDefinition An InputDefinition instance
      */
-    protected function getDefaultInputDefinition()
+    protected function getDefaultInputDefinition(): InputDefinition
     {
         return new InputDefinition(array(
             new InputOption('--help', '-h', InputOption::VALUE_NONE, 'Display this help message.'),
@@ -167,7 +167,7 @@ class DSpecApplication extends Application
      *
      * @return array An array of default Command instances
      */
-    protected function getDefaultCommands()
+    protected function getDefaultCommands(): array
     {
         return array(new HelpCommand());
     }
@@ -175,7 +175,7 @@ class DSpecApplication extends Application
     /**
      * Gets the command name, short circuit
      */
-    protected function getCommandName(InputInterface $input)
+    protected function getCommandName(InputInterface $input): ?string
     {
         return 'dspec';
     }

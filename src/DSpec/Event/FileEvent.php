@@ -2,7 +2,7 @@
 
 namespace DSpec\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * This file is part of dspec
@@ -13,7 +13,7 @@ use Symfony\Component\EventDispatcher\Event;
  * file that was distributed with this source code.
  */
 
-class FileEvent extends Event
+class FileEvent extends GenericEvent
 {
     protected $file;
 
