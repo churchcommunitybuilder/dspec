@@ -37,7 +37,7 @@ abstract class AbstractFormatter implements FormatterInterface, EventSubscriberI
         return $this;
     }
 
-    static public function getSubscribedEvents() 
+    static public function getSubscribedEvents(): array
     {
         return array();
     }

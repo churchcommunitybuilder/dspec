@@ -50,7 +50,7 @@ class DSpecCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (version_compare(PHP_VERSION, '5.3.0', '<')) {
             throw new \RunTimeException("dspec requires PHP >= 5.3.0");

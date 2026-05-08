@@ -43,7 +43,7 @@ class DSpecApplication extends Application
         return $this->container;
     }
 
-    public function doRun(InputInterface $input, OutputInterface $output)
+    public function doRun(InputInterface $input, OutputInterface $output): int
     {
         // introspect input without definition
         $config = $input->getParameterOption(array('--config', '-c'));

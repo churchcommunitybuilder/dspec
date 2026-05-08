@@ -53,7 +53,7 @@ class NyanCat extends AbstractFormatter implements FormatterInterface
         );
     }
 
-    static public function getSubscribedEvents()
+    static public function getSubscribedEvents(): array
     {
         return array_merge(parent::getSubscribedEvents(), array(
             Events::EXAMPLE_FAIL => array('onExampleFail', 0),

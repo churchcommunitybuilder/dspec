@@ -20,7 +20,7 @@ class Summary extends AbstractFormatter implements FormatterInterface
     {
     }
 
-    static public function getSubscribedEvents()
+    static public function getSubscribedEvents(): array
     {
         return array(
         );

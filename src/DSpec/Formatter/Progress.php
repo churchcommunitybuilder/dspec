@@ -27,7 +27,7 @@ class Progress extends AbstractFormatter implements FormatterInterface
      */
     protected $counter = 0;
 
-    static public function getSubscribedEvents()
+    static public function getSubscribedEvents(): array
     {
         return array_merge(parent::getSubscribedEvents(), array(
             Events::EXAMPLE_FAIL => array('onExampleFail', 0),
